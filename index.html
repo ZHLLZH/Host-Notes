@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host Notes</title>
+
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+</head>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f6f6f6;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 15px;
+    background: #ffffff;
+}
+
+h2 {
+    margin-top: 10px;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #ddd;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.tab-button.active {
+    background: #2c7be5;
+    color: white;
+}
+
+.section {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin: 6px 0;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 8px;
+    font-size: 15px;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.copy-btn {
+    background: #2c7be5;
+    color: white;
+    border: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.category {
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>Host Notes</h1>
+<p style="color:#666; margin-top:-10px;">Guest reviews and host messages</p>
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('reviewTab')">Review Guest</button>
+        <button class="tab-button" onclick="showTab('messageTab')">Handy Messages</button>
+    </div>
+
+    <!-- TAB 1: REVIEW GUEST -->
+    <div id="reviewTab">
+
+        <h2>Guest Review</h2>
+
+        <div class="section">
+            <label>Guest name (optional)</label>
+            <input type="text" id="guestName" placeholder="e.g. Anna">
+        </div>
+
+        <div class="section">
+            <strong>Communication</strong>
+            <label><input type="checkbox" id="commEasy"> Easy to communicate with</label>
+            <label><input type="checkbox" id="commResponsive"> Responsive to messages</label>
+            <label><input type="checkbox" id="checkinOk"> Followed check-in instructions</label>
+            <label><input type="checkbox" id="noIssues"> No issues during stay</label>
+        </div>
+
+        <div class="section">
+            <strong>House rules & care</strong>
+            <label><input type="checkbox" id="rules"> Followed house rules</label>
+            <label><input type="checkbox" id="clean"> Left the place clean</label>
+            <label><input type="checkbox" id="care"> Took good care of the property</label>
+        </div>
+
+        <div class="section">
+            <strong>Would you host again?</strong>
+            <label><input type="radio" name="hostAgain" value="definitely"> Yes, definitely</label>
+            <label><input type="radio" name="hostAgain" value="yes"> Yes</label>
+            <label><input type="radio" name="hostAgain" value="neutral" checked> Neutral / not mentioned</label>
+        </div>
+
+        <button onclick="generateReview()">Generate review</button>
+
+        <div class="section">
+            <textarea id="reviewOutput" readonly></textarea>
+            <button class="copy-btn" onclick="copyText('reviewOutput')">Copy review</button>
+        </div>
+
+    </div>
+
+    <!-- TAB 2: HANDY MESSAGES -->
+    <div id="messageTab" class="hidden">
+
+        <h2>Handy Messages</h2>
+
+        <div class="category">
+            <h3>Longer stay check-in</h3>
+            <textarea id="msgCheckin">
+Hi, just checking in to see how things are going. Please let me know if everything is working well or if you need anything during your stay. Happy to help. Lily.
+            </textarea>
+            <button class="copy-btn" onclick="copyText('msgCheckin')">Copy message</button>
+        </div>
+
+        <div class="category">
+            <h3>Issues / damage / cleaning</h3>
+            <textarea id="msgIssue">
+Hi, after check-out we noticed an issue that wasn’t present before the stay. We just wanted to check with you in case this was accidental. Please let us know. Thank you.Lily.
+            </textarea>
+            <button class="copy-btn" onclick="copyText('msgIssue')">Copy message</button>
+        </div>
+
+        <div class="category">
+            <h3>Neutral / minimal review</h3>
+            <textarea id="msgNeutral">
+The guest completed their stay and communication was adequate.
+            </textarea>
+            <button class="copy-btn" onclick="copyText('msgNeutral')">Copy message</button>
+        </div>
+
+        <div class="category">
+            <h3>Direct payment – accepted with conditions</h3>
+            <textarea id="msgDirect">
+Thanks for your message. I’m happy to accept direct payment for guests who have completed at least one stay previously.
+
+I can temporarily hold the dates for you for two days. If payment is not received within this time, the dates will be released back to the public calendar.
+
+Payment details:
+Name: XXX
+Bank account: XXX 
+
+Please let me know once payment has been made.
+Best Regards,
+Lily
+            </textarea>
+            <button class="copy-btn" onclick="copyText('msgDirect')">Copy message</button>
+        </div>
+
+        <div class="category">
+            <h3>Releasing held dates</h3>
+            <textarea id="msgRelease">
+Hi, as payment has not been received within the agreed timeframe, the dates have now been released back to the public calendar. You’re welcome to check availability again at any time.Lily
+            </textarea>
+            <button class="copy-btn" onclick="copyText('msgRelease')">Copy message</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function showTab(tabId) {
+    document.getElementById('reviewTab').classList.add('hidden');
+    document.getElementById('messageTab').classList.add('hidden');
+
+    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+
+    document.getElementById(tabId).classList.remove('hidden');
+    event.target.classList.add('active');
+}
+
+function generateReview() {
+    const name = document.getElementById('guestName').value.trim();
+    const subject = name ? name : "The guest";
+
+    let sentences = [];
+
+    if (document.getElementById('commEasy').checked || document.getElementById('commResponsive').checked) {
+        sentences.push("Communication was smooth and easy throughout the stay.");
+    }
+
+    if (document.getElementById('checkinOk').checked) {
+        sentences.push("Check-in was straightforward and instructions were followed.");
+    }
+
+    if (document.getElementById('noIssues').checked) {
+        sentences.push("There were no issues during the stay.");
+    }
+
+    if (document.getElementById('rules').checked) {
+        sentences.push("House rules were respected.");
+    }
+
+    if (document.getElementById('clean').checked) {
+        sentences.push("The place was left clean and tidy.");
+    }
+
+    if (document.getElementById('care').checked) {
+        sentences.push("The property was well looked after.");
+    }
+
+    let hostAgain = document.querySelector('input[name="hostAgain"]:checked').value;
+    if (hostAgain === "definitely") {
+        sentences.push("We would be very happy to host again and highly recommend them to other hosts.");
+    } else if (hostAgain === "yes") {
+        sentences.push("We would be happy to host again.");
+    }
+
+    let output = subject + " was a pleasant guest to host. " + sentences.join(" ");
+    document.getElementById('reviewOutput').value = output;
+}
+
+function copyText(id) {
+    const textArea = document.getElementById(id);
+    textArea.select();
+    textArea.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+}
+</script>
+
+</body>
+</html>
