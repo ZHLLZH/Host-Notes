@@ -64,9 +64,12 @@ input[type="text"] {
 
 textarea {
     width: 100%;
-    min-height: 120px;
+    box-sizing: border-box;
+    min-height: 60px;
     padding: 8px;
     font-size: 15px;
+    font-family: inherit;
+    resize: vertical;
 }
 
 button {
@@ -252,7 +255,26 @@ function showTab(tabId) {
 
     document.getElementById(tabId).classList.remove('hidden');
     event.target.classList.add('active');
+
+    if (tabId === 'messageTab') fitAllTextareas();
 }
+
+// Trim the extra blank lines around each message and fit the box to its text
+function fitTextarea(t) {
+    t.style.height = 'auto';
+    t.style.height = (t.scrollHeight + 2) + 'px';
+}
+
+function fitAllTextareas() {
+    document.querySelectorAll('#messageTab textarea').forEach(fitTextarea);
+}
+
+document.querySelectorAll('#messageTab textarea').forEach(t => {
+    t.value = t.value.trim();
+    t.addEventListener('input', () => fitTextarea(t));
+});
+
+window.addEventListener('resize', fitAllTextareas);
 
 function generateReview() {
     const name = document.getElementById('guestName').value.trim();
