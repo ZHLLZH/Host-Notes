@@ -112,6 +112,7 @@ button {
         <div class="section">
             <label>Guest name (optional)</label>
             <input type="text" id="guestName" placeholder="e.g. Anna">
+            <label><input type="checkbox" id="isGroup" checked> Group booking (e.g. “Anna’s group”)</label>
         </div>
 
         <div class="section">
@@ -255,7 +256,7 @@ function showTab(tabId) {
 
 function generateReview() {
     const name = document.getElementById('guestName').value.trim();
-    const subject = name ? name : "The guest";
+    const isGroup = document.getElementById('isGroup').checked;
 
     let sentences = [];
 
@@ -290,7 +291,18 @@ function generateReview() {
         sentences.push("We would be happy to host again.");
     }
 
-    let output = subject + " was a pleasant guest to host. " + sentences.join(" ");
+    let opening;
+    if (isGroup) {
+        let subject = "The group";
+        if (name) {
+            subject = /group/i.test(name) ? name : name + "’s group";
+        }
+        opening = subject + " were pleasant guests to host.";
+    } else {
+        opening = (name ? name : "The guest") + " was a pleasant guest to host.";
+    }
+
+    let output = opening + " " + sentences.join(" ");
     document.getElementById('reviewOutput').value = output;
 }
 
